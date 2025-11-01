@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Gilroy', Arial, sans-serif;
+    }
+
+    body {
+      background: #f8f9fa;
+      padding: 40px 20px;
+    }
+
+    .collection-section {
+      max-width: 1400px;
+      margin: 0 auto 60px;
+    }
+
+    .collection-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding: 0 10px;
+    }
+
+    .collection-title {
+      font-size: 48px;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      color: #0a002e;
+      font-family: 'Times New Roman', Times, serif;
+    }
+
+    .yacht-carousel {
+      position: relative;
+      overflow: hidden;
+      padding: 0 50px;
+    }
+
+    .yacht-track {
+      display: flex;
+      gap: 24px;
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .yacht-card {
+      flex: 0 0 calc(33.333% - 16px);
+      background: #fff;
+      border-radius: 0;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .yacht-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+
+    /* Image Slideshow Styles */
+    .yacht-image-wrapper {
+      position: relative;
+      height: 280px;
+      overflow: hidden;
+      background: #e8f0f7;
+    }
+
+    .yacht-image-slideshow {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .yacht-image-track {
+      display: flex;
+      height: 100%;
+      transition: transform 0.4s ease-in-out;
+    }
+
+    .yacht-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .image-nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255, 255, 255, 0.9);
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      color: #333;
+      z-index: 2;
+      opacity: 0;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .yacht-image-wrapper:hover .image-nav-btn {
+      opacity: 1;
+    }
+
+    .image-nav-btn:hover {
+      background: #fff;
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    .image-nav-btn.prev {
+      left: 10px;
+    }
+
+    .image-nav-btn.next {
+      right: 10px;
+    }
+
+    .image-indicators {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 6px;
+      z-index: 2;
+    }
+
+    .indicator-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.5);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .indicator-dot.active {
+      background: #fff;
+      width: 24px;
+      border-radius: 4px;
+    }
+
+    .yacht-content {
+      padding: 24px;
+    }
+
+    .yacht-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .yacht-title {
+      font-size: 26px;
+      font-weight: 700;
+      color: #1a1a1a;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+
+    .yacht-location {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 20px;
+    }
+
+    .yacht-specs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      padding: 20px 0;
+      border-top: 1px solid #e8e8e8;
+      border-bottom: 1px solid #e8e8e8;
+      margin-bottom: 20px;
+    }
+
+    .spec-item {
+      text-align: left;
+    }
+
+    .spec-label {
+      font-size: 12px;
+      color: #999;
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .spec-value {
+      font-size: 18px;
+      color: #1a1a1a;
+      font-weight: 600;
+    }
+
+    .yacht-price {
+      margin-bottom: 20px;
+    }
+
+    .price-amount {
+      font-size: 36px;
+      font-weight: 700;
+      color: #1a1a1a;
+      letter-spacing: -0.02em;
+    }
+
+    .price-period {
+      font-size: 16px;
+      color: #666;
+      font-weight: 400;
+    }
+
+    .yacht-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn-rent {
+      flex: 1;
+      text-align: center;
+      padding: 14px 24px;
+      background: #1a2d42;
+      text-decoration: none;
+      border: none;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-rent:hover {
+      background: #0f1a2a;
+    }
+
+    .btn-details {
+      flex: 1;
+      text-align: center;
+      padding: 14px 24px;
+      background: #fff;
+      text-decoration: none;
+      border: 2px solid #1a2d42;
+      color: #1a2d42;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-details:hover {
+      background: #f8f9fa;
+    }
+
+    .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      color: #333;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      transition: all 0.2s ease;
+      z-index: 10;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .carousel-btn:hover {
+      background: #f5f5f5;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .carousel-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .carousel-btn.prev {
+      left: 0;
+    }
+
+    .carousel-btn.next {
+      right: 0;
+    }
+
+    @media (max-width: 1200px) {
+      .yacht-card {
+        flex: 0 0 calc(50% - 12px);
+      }
+
+      .yacht-specs {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .yacht-carousel {
+        padding: 0 40px;
+      }
+
+      .yacht-card {
+        flex: 0 0 100%;
+      }
+
+      .collection-title {
+        font-size: 32px;
+      }
+
+      .yacht-title {
+        font-size: 22px;
+      }
+
+      .price-amount {
+        font-size: 30px;
+      }
+
+      .yacht-specs {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+      }
+
+      .carousel-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Luxury Collection -->
+  <div class="collection-section">
+    <div class="collection-header">
+      <h2 class="collection-title">LUXURY</h2>
+    </div>
+
+    <div class="yacht-carousel" data-carousel="luxury">
+      <button class="carousel-btn prev" aria-label="Previous">‹</button>
+      <div class="yacht-track">
+        <!-- Yacht Card 1 -->
+        <div class="yacht-card">
+          <div class="yacht-image-wrapper">
+            <div class="yacht-image-slideshow">
+              <button class="image-nav-btn prev">‹</button>
+              <div class="yacht-image-track">
+                <img class="yacht-image" src="https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=800&h=600&fit=crop" alt="Lamborghini 1">
+                <img class="yacht-image" src="https://images.unsplash.com/photo-1605281317010-fe5ffe798166?w=800&h=600&fit=crop" alt="Lamborghini 2">
+                <img class="yacht-image" src="https://images.unsplash.com/photo-1608312418156-c1a2dfd48f50?w=800&h=600&fit=crop" alt="Lamborghini 3">
+                <img class="yacht-image" src="https://images.unsplash.com/photo-1569263979104-865ab7cd8d13?w=800&h=600&fit=crop" alt="Lamborghini 4">
+                <img class="yacht-image" src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=600&fit=crop" alt="Lamborghini 5">
+              </div>
+              <button class="image-nav-btn next">›</button>
+              <div class="image-indicators">
+                <span class="indicator-dot active"></span>
+                <span class="indicator-dot"></span>
+                <span class="indicator-dot"></span>
+                <span class="indicator-dot"></span>
+                <span class="indicator-dot"></span>
+              </div>
+            </div>
+          </div>
+          <div class="yacht-content">
+            <div class="yacht-header">
+              <h3 class="yacht-title">LAMBORGHINI TECHNOMAR 63</h3>
+            </div>
+            <div class="yacht-location">Location: Dubai Harbour</div>
+            <div class="yacht-specs">
+              <div class="spec-item">
+                <span class="spec-label">Size</span>
+                <div class="spec-value">63 FT</div>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Capacity</span>
+                <div class="spec-value">12 PAX</div>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Cabins</span>
+                <div class="spec-value">2</div>
+              </div>
+            </div>
+            <div class="yacht-price">
+              <span class="price-amount">9999 AED</span>
+              <span class="price-period">/ hour + 5% VAT</span>
+            </div>
+            <div class="yacht-actions">
+              <a href="https://wa.me/+971502346004" target="_blank" class="btn-rent">
+                <i class="fab fa-whatsapp"></i> WhatsApp
+              </a>
+              <a href="tel:+971502346004" class="btn-details">
+                <i class="fas fa-phone"></i> Call
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Yacht Card 2 -->
+        <div class="yacht-card">
+          <div class="yacht-image-wrapper">
+            <div class="yacht-image-slideshow">
+              <button class="image-nav-btn prev">‹</button>
+              <div class="yacht-image-track">
+                <img class="yacht-image" src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop" alt="Predator 1">
+                <img class="yacht-image" src="https://images.unsplash.com/photo-1622401969486-fbf5c88ab7c3?w=800&h=600&fit=crop" alt="Predator 2">
+                <img class="yacht-image" src="https://images.unsplash.com/photo-1573843981267-be1999ff37cd?w=800&h=600&fit=crop" alt="Predator 3">
+                <img class="yacht-image" src="https://images.unsplash.com/photo-1566000785915-b2a7825fae5b?w=800&h=600&fit=crop" alt="Predator 4">
+                <img class="yacht-image" src="https://images.unsplash.com/photo-1540946485063-a40da27545f8?w=800&h=600&fit=crop" alt="Predator 5">
+              </div>
+              <button class="image-nav-btn next">›</button>
+              <div class="image-indicators">
+                <span class="indicator-dot active"></span>
+                <span class="indicator-dot"></span>
+                <span class="indicator-dot"></span>
+                <span class="indicator-dot"></span>
+                <span class="indicator-dot"></span>
+              </div>
+            </div>
+          </div>
+          <div class="yacht-content">
+            <div class="yacht-header">
+              <h3 class="yacht-title">PREDATOR</h3>
+            </div>
+            <div class="yacht-location">Location: Dubai Harbour</div>
+            <div class="yacht-specs">
+              <div class="spec-item">
+                <span class="spec-label">Size</span>
+                <div class="spec-value">95 FT</div>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Capacity</span>
+                <div class="spec-value">25 PAX</div>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Cabins</span>
+                <div class="spec-value">4</div>
+              </div>
+            </div>
+            <div class="yacht-price">
+              <span class="price-amount">4999 AED</span>
+              <span class="price-period">/ hour + 5% VAT</span>
+            </div>
+            <div class="yacht-actions">
+              <a href="https://wa.me/+971502346004" target="_blank" class="btn-rent">
+                <i class="fab fa-whatsapp"></i> WhatsApp
+              </a>
+              <a href="tel:+971502346004" class="btn-details">
+                <i class="fas fa-phone"></i> Call
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Yacht Card 3 -->
+        <div class="yacht-card">
+          <div class="yacht-image-wrapper">
+            <div class="yacht-image-slideshow">
+              <button class="image-nav-btn prev">‹</button>
+              <div class="yacht-image-track">
+                <img class="yacht-image" src="https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=800&h=600&fit=crop" alt="Purple 1">
+                <img class="yacht-image" src="https://images.unsplash.com/photo-1622401969486-fbf5c88ab7c3?w=800&h=600&fit=crop" alt="Purple 2">
+                <img class="yacht-image" src="https://images.unsplash.com/photo-1583682248080-c2fbdaeb95c9?w=800&h=600&fit=crop" alt="Purple 3">
+                <img class="yacht-image" src="https://images.unsplash.com/photo-1569263979104-865ab7cd8d13?w=800&h=600&fit=crop" alt="Purple 4">
+                <img class="yacht-image" src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=600&fit=crop" alt="Purple 5">
+              </div>
+              <button class="image-nav-btn next">›</button>
+              <div class="image-indicators">
+                <span class="indicator-dot active"></span>
+                <span class="indicator-dot"></span>
+                <span class="indicator-dot"></span>
+                <span class="indicator-dot"></span>
+                <span class="indicator-dot"></span>
+              </div>
+            </div>
+          </div>
+          <div class="yacht-content">
+            <div class="yacht-header">
+              <h3 class="yacht-title">PURPLE</h3>
+            </div>
+            <div class="yacht-location">Location: Dubai Harbour</div>
+            <div class="yacht-specs">
+              <div class="spec-item">
+                <span class="spec-label">Size</span>
+                <div class="spec-value">90 FT</div>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Capacity</span>
+                <div class="spec-value">40 PAX</div>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Cabins</span>
+                <div class="spec-value">2</div>
+              </div>
+            </div>
+            <div class="yacht-price">
+              <span class="price-amount">1999 AED</span>
+              <span class="price-period">/ hour + 5% VAT</span>
+            </div>
+            <div class="yacht-actions">
+              <a href="https://wa.me/+971502346004" target="_blank" class="btn-rent">
+                <i class="fab fa-whatsapp"></i> WhatsApp
+              </a>
+              <a href="tel:+971502346004" class="btn-details">
+                <i class="fas fa-phone"></i> Call
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="carousel-btn next" aria-label="Next">›</button>
+    </div>
+  </div>
+
+  <script>
+    // Image Slideshow functionality
+    function initImageSlideshow() {
+      const slideWrappers = document.querySelectorAll('.yacht-image-slideshow');
+      
+      slideWrappers.forEach(wrapper => {
+        const track = wrapper.querySelector('.yacht-image-track');
+        const images = wrapper.querySelectorAll('.yacht-image');
+        const prevBtn = wrapper.querySelector('.image-nav-btn.prev');
+        const nextBtn = wrapper.querySelector('.image-nav-btn.next');
+        const indicators = wrapper.querySelectorAll('.indicator-dot');
+        let currentIndex = 0;
+
+        function updateSlide(index) {
+          currentIndex = index;
+          track.style.transform = `translateX(-${currentIndex * 100}%)`;
+          
+          indicators.forEach((dot, i) => {
+            dot.classList.toggle('active', i === currentIndex);
+          });
+        }
+
+        prevBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const newIndex = currentIndex > 0 ? currentIndex - 1 : images.length - 1;
+          updateSlide(newIndex);
+        });
+
+        nextBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const newIndex = currentIndex < images.length - 1 ? currentIndex + 1 : 0;
+          updateSlide(newIndex);
+        });
+
+        indicators.forEach((dot, index) => {
+          dot.addEventListener('click', (e) => {
+            e.stopPropagation();
+            updateSlide(index);
+          });
+        });
+      });
+    }
+
+    // Main Yacht Carousel functionality
+    function initYachtCarousel() {
+      const carousels = document.querySelectorAll('.yacht-carousel');
+
+      carousels.forEach(carousel => {
+        const track = carousel.querySelector('.yacht-track');
+        const cards = carousel.querySelectorAll('.yacht-card');
+        const prevBtn = carousel.querySelector('.carousel-btn.prev');
+        const nextBtn = carousel.querySelector('.carousel-btn.next');
+        
+        let currentIndex = 0;
+        let cardsPerView = 3;
+
+        function updateCardsPerView() {
+          if (window.innerWidth <= 768) {
+            cardsPerView = 1;
+          } else if (window.innerWidth <= 1200) {
+            cardsPerView = 2;
+          } else {
+            cardsPerView = 3;
+          }
+        }
+
+        function updateCarousel() {
+          const cardWidth = cards[0].offsetWidth;
+          const gap = 24;
+          const offset = currentIndex * (cardWidth + gap);
+          track.style.transform = `translateX(-${offset}px)`;
+          
+          prevBtn.disabled = currentIndex === 0;
+          nextBtn.disabled = currentIndex >= cards.length - cardsPerView;
+        }
+
+        prevBtn.addEventListener('click', () => {
+          if (currentIndex > 0) {
+            currentIndex--;
+            updateCarousel();
+          }
+        });
+
+        nextBtn.addEventListener('click', () => {
+          if (currentIndex < cards.length - cardsPerView) {
+            currentIndex++;
+            updateCarousel();
+          }
+        });
+
+        window.addEventListener('resize', () => {
+          updateCardsPerView();
+          currentIndex = Math.min(currentIndex, cards.length - cardsPerView);
+          updateCarousel();
+        });
+
+        updateCardsPerView();
+        updateCarousel();
+      });
+    }
+
+    // Initialize everything
+    document.addEventListener('DOMContentLoaded', () => {
+      initImageSlideshow();
+      initYachtCarousel();
+    });
+  </script>
+</body>
+</html>
